@@ -8,7 +8,7 @@ int busquedaBinaria(int vector[], int n, int valor) {
     int derecha = n - 1;
     int medio;
     
-    for (; izquierda <= derecha;) {
+    for (int i = 0; izquierda <= derecha; i++) {
         medio = izquierda + (derecha - izquierda) / 2;
         
         if (vector[medio] == valor) {
@@ -45,7 +45,7 @@ void ordenamientoInsercion(int vector[], int n) {
         clave = vector[i];
         j = i - 1;
         
-        for (; j >= 0 && vector[j] > clave; j--) {
+        for (int i = 0; j >= 0 && vector[j] > clave; j--) {
             vector[j + 1] = vector[j];
         }
         vector[j + 1] = clave;
@@ -76,7 +76,7 @@ void ordenamientoPeine(int vector[], int n) {
     double reduccion = 1.2;
     int intercambiado = 1;
     
-    for (; distancia > 1 || intercambiado;) {
+    for (int j = 0; distancia > 1 || intercambiado;j++) {
         distancia = (int)(distancia / reduccion);
         if (distancia < 1) {
             distancia = 1;
