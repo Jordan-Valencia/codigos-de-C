@@ -115,7 +115,7 @@ int main() {
     }
     
     if (opcion == 1) { // Bubble Sort
-        printf("\n--- ORDENAMIENTO BURBUJA ---\n");
+        printf("\nORDENAMIENTO BURBUJA: \n");
         
         printf("\nMejor escenario inicial: ");
         imprimirVector(mejorCasoCopia, n);
@@ -132,7 +132,7 @@ int main() {
         ordenamientoBurbuja(casoPromedioCopia, n, &comparaciones, &movimientos);
         printf("Caso promedio - Comparaciones: %d, Movimientos: %d\n", comparaciones, movimientos);
     } else if (opcion == 2) { // Insertion Sort
-        printf("\n--- ORDENAMIENTO POR INSERCIÓN ---\n");
+        printf("\nORDENAMIENTO POR INSERCION: \n");
         
         printf("\nMejor escenario inicial: ");
         imprimirVector(mejorCasoCopia, n);
@@ -149,7 +149,7 @@ int main() {
         ordenamientoInsercion(casoPromedioCopia, n, &comparaciones, &movimientos);
         printf("Caso promedio - Comparaciones: %d, Movimientos: %d\n", comparaciones, movimientos);
     } else if (opcion == 3) { // Selection Sort
-        printf("\n--- ORDENAMIENTO POR SELECCIÓN ---\n");
+        printf("\nORDENAMIENTO POR SELECCIÓN: \n");
         
         printf("\nMejor escenario inicial: ");
         imprimirVector(mejorCasoCopia, n);
