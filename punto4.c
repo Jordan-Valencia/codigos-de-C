@@ -64,8 +64,8 @@ int main() {
     printf("1. 1.3\n");
     printf("2. 1.2\n");
     printf("3. 1.5\n");
-    printf("4. 1.0 (con distancia inicial personalizada)\n");
-    printf("Opción: ");
+    printf("4. 1.0 (personalizada)\n");
+    printf("Opcion: ");
     scanf("%d", &opcion);
     
     if (opcion == 1) {
