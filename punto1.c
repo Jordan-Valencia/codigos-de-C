@@ -8,7 +8,7 @@ int busquedaBinaria(int vector[], int n, int valor, int *comparaciones, int *mov
     *comparaciones = 0;
     *movimientos = 0;
     
-    for (; izquierda <= derecha;) {
+    for (int i = 0; izquierda <= derecha; i++) {
         medio = izquierda + (derecha - izquierda) / 2;
         (*comparaciones)++;
         
