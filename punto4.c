@@ -9,7 +9,7 @@ void imprimirVector(int vector[], int n) {
 }
 
 // Comb Sort
-void ordenamientoPeine(int vector[], int n, double reduccion, int distanciaInicial, int *comparaciones, int *movimientos) {
+void ordenamientoCombsort(int vector[], int n, double reduccion, int distanciaInicial, int *comparaciones, int *movimientos) {
     *comparaciones = 0;
     *movimientos = 0;
     
@@ -119,7 +119,7 @@ int main() {
     }
     printf("\nMejor escenario inicial: ");
     imprimirVector(mejorCasoCopia, n);
-    ordenamientoPeine(mejorCasoCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
+    ordenamientoCombsort(mejorCasoCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
     printf("Mejor escenario - Comparaciones: %d, Movimientos: %d\n", comparaciones, movimientos);
     
     // Peor escenario
@@ -128,7 +128,7 @@ int main() {
     }
     printf("\nPeor escenario inicial: ");
     imprimirVector(peorCasoCopia, n);
-    ordenamientoPeine(peorCasoCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
+    ordenamientoCombsort(peorCasoCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
     printf("Peor escenario - Comparaciones: %d, Movimientos: %d\n", comparaciones, movimientos);
     
     // Caso promedio
@@ -137,7 +137,7 @@ int main() {
     }
     printf("\nCaso promedio inicial: ");
     imprimirVector(casoPromedioCopia, n);
-    ordenamientoPeine(casoPromedioCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
+    ordenamientoCombsort(casoPromedioCopia, n, reduccion, distanciaInicial, &comparaciones, &movimientos);
     printf("Caso promedio - Comparaciones: %d, Movimientos: %d\n", comparaciones, movimientos);
     
     return 0;
