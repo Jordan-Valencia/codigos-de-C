@@ -46,9 +46,6 @@ void ordenamientoInsercion(int vector[], int n, int *comparaciones, int *movimie
                 vector[j + 1] = vector[j];
                 (*movimientos)++;
                 posicionFinal = j;
-                
-                printf("Movimiento en Ordenamiento por Inserción: ");
-                imprimirVector(vector, n);
             } else {
                 break;
             }
