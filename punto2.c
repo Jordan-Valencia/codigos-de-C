@@ -71,7 +71,7 @@ void ordenamientoSeleccion(int vector[], int n) {
 }
 
 // Comb Sort
-void ordenamientoPeine(int vector[], int n) {
+void CombSort(int vector[], int n) {
     int distancia = n;
     double reduccion = 1.2;
     int intercambiado = 1;
@@ -113,7 +113,7 @@ int main() {
     printf("1. Ordenamiento Burbuja\n");
     printf("2. Ordenamiento por Inserción\n");
     printf("3. Ordenamiento por Selección\n");
-    printf("4. Ordenamiento Peine (distancia=1.2)\n");
+    printf("4. Ordenamiento CombSort (distancia=1.2)\n");
     printf("Opción: ");
     scanf("%d", &opcion);
     
@@ -134,8 +134,8 @@ int main() {
         ordenamientoSeleccion(vector, n);
         printf("Vector ordenado con Ordenamiento por Selección\n");
     } else if (opcion == 4) {
-        ordenamientoPeine(vector, n);
-        printf("Vector ordenado con Ordenamiento Peine\n");
+        CombSort(vector, n);
+        printf("Vector ordenado con Ordenamiento CombSort\n");
     } else {
         printf("Opción no válida\n");
         return 1;
