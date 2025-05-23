@@ -45,7 +45,7 @@ void ordenamientoInsercion(int vector[], int n) {
         clave = vector[i];
         j = i - 1;
         
-        for (int i = 0; j >= 0 && vector[j] > clave; j--) {
+        for (; j >= 0 && vector[j] > clave; j--) {
             vector[j + 1] = vector[j];
         }
         vector[j + 1] = clave;
