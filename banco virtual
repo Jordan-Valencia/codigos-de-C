@@ -1,0 +1,345 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+// Estructura para las cuentas
+typedef struct {
+    int numero;
+    int tipo; // 1 = Ahorros, 2 = Corriente
+    double saldo;
+} Cuenta;
+
+// Variables globales
+Cuenta cuentas[10] = {
+    {12345, 1, 1500.0},
+    {56789, 1, 3800.0},
+    {98765, 2, 7400.0}
+};
+int numCuentas = 3;
+
+// Prototipos de funciones
+int validarLogin(char* usuario, char* password);
+void mostrarMenu();
+void depositar();
+void retirar();
+void transferir();
+void listarCuentas();
+int buscarCuenta(int numeroCuenta);
+void guardarMovimiento(char* tipoOperacion, int cuenta, double monto, double saldoAnterior, double saldoNuevo);
+double validarMonto();
+char continuarOperacion();
+
+int main() {
+    char usuario[50];
+    char password[50];
+    int opcion;
+    char continuar;
+    
+    printf("===============================\n");
+    printf("=== LOGIN BANCO PROGIIBANK ===\n");
+    printf("===============================\n");
+    printf("Usuario: ");
+    scanf("%s", usuario);
+    printf("Password: ");
+    scanf("%s", password);
+    
+    if (!validarLogin(usuario, password)) {
+        printf("\nError: Usuario o password incorrecto.\n");
+        printf("Acceso denegado.\n");
+        return 1;
+    }
+    
+    printf("\nLogin exitoso. Bienvenido al sistema bancario.\n");
+    
+    do {
+        mostrarMenu();
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+        
+        switch(opcion) {
+            case 1:
+                depositar();
+                break;
+            case 2:
+                retirar();
+                break;
+            case 3:
+                transferir();
+                break;
+            case 4:
+                listarCuentas();
+                break;
+            case 5:
+                printf("\nGracias por usar nuestro sistema bancario.\n");
+                printf("Sesion terminada.\n");
+                return 0;
+            default:
+                printf("\nError: Opcion no valida. Por favor seleccione una opcion del 1 al 5.\n");
+        }
+        
+        if (opcion >= 1 && opcion <= 4) {
+            continuar = continuarOperacion();
+            if (continuar == 'N' || continuar == 'n') {
+                printf("\nGracias por usar nuestro sistema bancario.\n");
+                printf("Sesion terminada.\n");
+                break;
+            }
+        }
+        
+    } while(1);
+    
+    return 0;
+}
+
+int validarLogin(char* usuario, char* password) {
+    FILE* archivo = fopen("usuarios.txt", "r");
+    char usuarioArchivo[50];
+    char passwordArchivo[50];
+    
+    if (archivo == NULL) {
+        // Si no existe el archivo, crear uno con datos por defecto
+        archivo = fopen("usuarios.txt", "w");
+        if (archivo != NULL) {
+            fprintf(archivo, "admin 123456\n");
+            fclose(archivo);
+        }
+        // Validar con datos por defecto
+        if (strcmp(usuario, "admin") == 0 && strcmp(password, "123456") == 0) {
+            return 1;
+        }
+        return 0;
+    }
+    
+    while (fscanf(archivo, "%s %s", usuarioArchivo, passwordArchivo) == 2) {
+        if (strcmp(usuario, usuarioArchivo) == 0 && strcmp(password, passwordArchivo) == 0) {
+            fclose(archivo);
+            return 1;
+        }
+    }
+    
+    fclose(archivo);
+    return 0;
+}
+
+void mostrarMenu() {
+    printf("\n=== MENU PRINCIPAL ===\n");
+    printf("1. Depositar\n");
+    printf("2. Retirar\n");
+    printf("3. Transferir\n");
+    printf("4. Lista de Cuentas\n");
+    printf("5. Salir\n");
+}
+
+void depositar() {
+    int numeroCuenta, indiceCuenta;
+    double monto, saldoAnterior;
+    
+    printf("\n=== DEPOSITAR ===\n");
+    printf("Cuentas disponibles:\n");
+    for (int i = 0; i < numCuentas; i++) {
+        printf("Cuenta: %d - Tipo: %s - Saldo: $%.2f\n", 
+               cuentas[i].numero, 
+               (cuentas[i].tipo == 1) ? "Ahorros" : "Corriente",
+               cuentas[i].saldo);
+    }
+    
+    printf("\nIngrese el numero de cuenta para depositar: ");
+    scanf("%d", &numeroCuenta);
+    
+    indiceCuenta = buscarCuenta(numeroCuenta);
+    if (indiceCuenta == -1) {
+        printf("\nError: La cuenta %d no existe en el sistema.\n", numeroCuenta);
+        return;
+    }
+    
+    printf("Ingrese el monto a depositar: $");
+    monto = validarMonto();
+    if (monto <= 0) return;
+    
+    saldoAnterior = cuentas[indiceCuenta].saldo;
+    cuentas[indiceCuenta].saldo += monto;
+    
+    printf("\n=== RESUMEN DE MOVIMIENTO ===\n");
+    printf("Operacion: Deposito\n");
+    printf("Cuenta: %d\n", numeroCuenta);
+    printf("Monto depositado: $%.2f\n", monto);
+    printf("Saldo anterior: $%.2f\n", saldoAnterior);
+    printf("Saldo actual: $%.2f\n", cuentas[indiceCuenta].saldo);
+    
+    guardarMovimiento("DEPOSITO", numeroCuenta, monto, saldoAnterior, cuentas[indiceCuenta].saldo);
+}
+
+void retirar() {
+    int numeroCuenta, indiceCuenta;
+    double monto, saldoAnterior;
+    
+    printf("\n=== RETIRAR ===\n");
+    printf("Cuentas disponibles:\n");
+    for (int i = 0; i < numCuentas; i++) {
+        printf("Cuenta: %d - Tipo: %s - Saldo: $%.2f\n", 
+               cuentas[i].numero, 
+               (cuentas[i].tipo == 1) ? "Ahorros" : "Corriente",
+               cuentas[i].saldo);
+    }
+    
+    printf("\nIngrese el numero de cuenta para retirar: ");
+    scanf("%d", &numeroCuenta);
+    
+    indiceCuenta = buscarCuenta(numeroCuenta);
+    if (indiceCuenta == -1) {
+        printf("\nError: La cuenta %d no existe en el sistema.\n", numeroCuenta);
+        return;
+    }
+    
+    printf("Ingrese el monto a retirar: $");
+    monto = validarMonto();
+    if (monto <= 0) return;
+    
+    if (monto > cuentas[indiceCuenta].saldo) {
+        printf("\nError: Saldo insuficiente. Saldo disponible: $%.2f\n", cuentas[indiceCuenta].saldo);
+        return;
+    }
+    
+    saldoAnterior = cuentas[indiceCuenta].saldo;
+    cuentas[indiceCuenta].saldo -= monto;
+    
+    printf("\n=== RESUMEN DE MOVIMIENTO ===\n");
+    printf("Operacion: Retiro\n");
+    printf("Cuenta: %d\n", numeroCuenta);
+    printf("Monto retirado: $%.2f\n", monto);
+    printf("Saldo anterior: $%.2f\n", saldoAnterior);
+    printf("Saldo actual: $%.2f\n", cuentas[indiceCuenta].saldo);
+    
+    guardarMovimiento("RETIRO", numeroCuenta, monto, saldoAnterior, cuentas[indiceCuenta].saldo);
+}
+
+void transferir() {
+    int cuentaOrigen, cuentaDestino, indiceOrigen, indiceDestino;
+    double monto, saldoAnteriorOrigen, saldoAnteriorDestino;
+    
+    printf("\n=== TRANSFERIR ===\n");
+    printf("Cuentas disponibles:\n");
+    for (int i = 0; i < numCuentas; i++) {
+        printf("Cuenta: %d - Tipo: %s - Saldo: $%.2f\n", 
+               cuentas[i].numero, 
+               (cuentas[i].tipo == 1) ? "Ahorros" : "Corriente",
+               cuentas[i].saldo);
+    }
+    
+    printf("\nIngrese el numero de cuenta origen: ");
+    scanf("%d", &cuentaOrigen);
+    
+    indiceOrigen = buscarCuenta(cuentaOrigen);
+    if (indiceOrigen == -1) {
+        printf("\nError: La cuenta origen %d no existe en el sistema.\n", cuentaOrigen);
+        return;
+    }
+    
+    printf("Ingrese el numero de cuenta destino: ");
+    scanf("%d", &cuentaDestino);
+    
+    indiceDestino = buscarCuenta(cuentaDestino);
+    if (indiceDestino == -1) {
+        printf("\nError: La cuenta destino %d no existe en el sistema.\n", cuentaDestino);
+        return;
+    }
+    
+    if (cuentaOrigen == cuentaDestino) {
+        printf("\nError: No puede transferir a la misma cuenta.\n");
+        return;
+    }
+    
+    printf("Ingrese el monto a transferir: $");
+    monto = validarMonto();
+    if (monto <= 0) return;
+    
+    if (monto > cuentas[indiceOrigen].saldo) {
+        printf("\nError: Saldo insuficiente en cuenta origen. Saldo disponible: $%.2f\n", cuentas[indiceOrigen].saldo);
+        return;
+    }
+    
+    saldoAnteriorOrigen = cuentas[indiceOrigen].saldo;
+    saldoAnteriorDestino = cuentas[indiceDestino].saldo;
+    
+    cuentas[indiceOrigen].saldo -= monto;
+    cuentas[indiceDestino].saldo += monto;
+    
+    printf("\n=== RESUMEN DE MOVIMIENTO ===\n");
+    printf("Operacion: Transferencia\n");
+    printf("Cuenta origen: %d\n", cuentaOrigen);
+    printf("Cuenta destino: %d\n", cuentaDestino);
+    printf("Monto transferido: $%.2f\n", monto);
+    printf("Saldo anterior cuenta origen: $%.2f\n", saldoAnteriorOrigen);
+    printf("Saldo actual cuenta origen: $%.2f\n", cuentas[indiceOrigen].saldo);
+    printf("Saldo anterior cuenta destino: $%.2f\n", saldoAnteriorDestino);
+    printf("Saldo actual cuenta destino: $%.2f\n", cuentas[indiceDestino].saldo);
+    
+    // Guardar movimiento para cuenta origen
+    char descripcion[100];
+    sprintf(descripcion, "TRANSFERENCIA A CUENTA %d", cuentaDestino);
+    guardarMovimiento(descripcion, cuentaOrigen, -monto, saldoAnteriorOrigen, cuentas[indiceOrigen].saldo);
+    
+    // Guardar movimiento para cuenta destino
+    sprintf(descripcion, "TRANSFERENCIA DE CUENTA %d", cuentaOrigen);
+    guardarMovimiento(descripcion, cuentaDestino, monto, saldoAnteriorDestino, cuentas[indiceDestino].saldo);
+}
+
+void listarCuentas() {
+    printf("\n=== LISTA DE CUENTAS ===\n");
+    printf("%-10s %-15s %-10s\n", "Numero", "Tipo", "Saldo");
+    printf("----------------------------------------\n");
+    
+    for (int i = 0; i < numCuentas; i++) {
+        printf("%-10d %-15s $%-9.2f\n", 
+               cuentas[i].numero,
+               (cuentas[i].tipo == 1) ? "Ahorros" : "Corriente",
+               cuentas[i].saldo);
+    }
+}
+
+int buscarCuenta(int numeroCuenta) {
+    for (int i = 0; i < numCuentas; i++) {
+        if (cuentas[i].numero == numeroCuenta) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void guardarMovimiento(char* tipoOperacion, int cuenta, double monto, double saldoAnterior, double saldoNuevo) {
+    FILE* archivo = fopen("movimientos.txt", "a");
+    if (archivo == NULL) {
+        printf("Error: No se pudo guardar el movimiento en el archivo.\n");
+        return;
+    }
+    
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    
+    fprintf(archivo, "%02d/%02d/%d %02d:%02d:%02d - %s - Cuenta: %d - Monto: $%.2f - Saldo Anterior: $%.2f - Saldo Nuevo: $%.2f\n",
+            tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+            tm.tm_hour, tm.tm_min, tm.tm_sec,
+            tipoOperacion, cuenta, monto, saldoAnterior, saldoNuevo);
+    
+    fclose(archivo);
+}
+
+double validarMonto() {
+    double monto;
+    scanf("%lf", &monto);
+    
+    if (monto <= 0) {
+        printf("\nError: El monto debe ser mayor que cero y no puede ser negativo.\n");
+        return -1;
+    }
+    
+    return monto;
+}
+
+char continuarOperacion() {
+    char respuesta;
+    printf("\n¿Desea realizar otra operacion? (S/N): ");
+    scanf(" %c", &respuesta);
+    return respuesta;
+}
